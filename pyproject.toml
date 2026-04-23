@@ -1,0 +1,53 @@
+[project]
+name = "mini-meta-harness"
+version = "0.1.0"
+description = "Budget reproduction of Meta-Harness using Kimi K2.6 as the proposer"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Alan Rocque" }]
+dependencies = [
+    "anthropic>=0.40.0",
+    "datasets>=3.0.0",
+    "pydantic>=2.9.0",
+    "python-dotenv>=1.0.1",
+    "rich>=13.9.0",
+    "tenacity>=9.0.0",
+    "tiktoken>=0.8.0",
+    "typer>=0.12.0",
+]
+
+[project.optional-dependencies]
+notebook = [
+    "jupyter",
+    "matplotlib",
+    "pandas",
+    "seaborn",
+]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[project.scripts]
+mmh = "mini_meta_harness.run:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mini_meta_harness"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
