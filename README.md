@@ -24,6 +24,8 @@ its score, and its raw per-example traces; it reads them and writes a better
 one. This repo reimplements that loop small enough to fit a portfolio budget,
 with clean on-disk traces a downstream visualizer can consume.
 
+Interactive replay → [harness.xyz](https://harness.xyz)
+
 ## Quickstart
 
 ```bash
