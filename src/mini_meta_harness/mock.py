@@ -197,7 +197,8 @@ def classify(text, target_client, target_model):
         f"Patient symptoms: {text}\\nThink briefly, then write one diagnosis from: "
         + ", ".join(CLASS_LABELS))
     final = _ask(target_client, target_model,
-        f"Given this reasoning: {draft}\\n\\nReturn only one diagnosis label, exactly as written in this list: "
+        f"Patient symptoms: {text}\\nDraft answer: {draft}\\n\\n"
+        "Return only one diagnosis label, exactly as written in this list: "
         + ", ".join(CLASS_LABELS), max_tokens=16)
     return final.strip().lower()
 ''',

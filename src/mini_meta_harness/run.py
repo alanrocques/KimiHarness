@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -31,10 +30,10 @@ def run(
     proposer_model: str = typer.Option(DEFAULT_PROPOSER_MODEL, help="Moonshot model id used for proposing harnesses."),
     target_model: str = typer.Option(DEFAULT_TARGET_MODEL, help="Model id used inside the harness (target)."),
     mock: bool = typer.Option(False, "--mock", help="Run the full pipeline with canned responses; no API calls."),
-    run_id: Optional[str] = typer.Option(None, help="Override the auto-generated run id."),
+    run_id: str | None = typer.Option(None, help="Override the auto-generated run id."),
 ):
     """Execute the Meta-Harness outer loop."""
-    rid = run_id or datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
+    rid = run_id or datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
     config = RunConfig(
         run_id=rid,
         iterations=iterations,
@@ -43,7 +42,7 @@ def run(
         proposer_model=proposer_model,
         target_model=target_model,
         mock=mock,
-        started_at=datetime.now(timezone.utc),
+        started_at=datetime.now(UTC),
     )
     console.log(f"[bold]Starting run[/bold] {rid} (mock={mock}, iterations={iterations})")
     summary = outer_loop.run(config)

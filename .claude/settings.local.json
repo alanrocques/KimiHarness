@@ -3,7 +3,9 @@
     "allow": [
       "Bash(uv --version)",
       "Bash(uv sync *)",
-      "Bash(uv run *)"
+      "Bash(uv run *)",
+      "WebFetch(domain:platform.moonshot.ai)",
+      "WebFetch(domain:platform.kimi.ai)"
     ]
   }
 }

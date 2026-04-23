@@ -12,7 +12,11 @@ from pathlib import Path
 from .types import CostBreakdown
 
 PRICING: dict[str, dict[str, float]] = {
-    # Moonshot Kimi
+    # Moonshot Kimi K2.6 — flagship (https://platform.kimi.ai/docs/pricing/chat-k26).
+    # Cache-miss input is used as the conservative default; if the SDK starts
+    # surfacing cache_read tokens, split this into hit/miss branches.
+    "kimi-k2.6": {"input_per_mtok": 0.95, "output_per_mtok": 4.00},
+    # Prior-generation Kimi, kept for back-compat with older run directories.
     "kimi-k2-0711-preview": {"input_per_mtok": 0.60, "output_per_mtok": 2.50},
     # Anthropic Claude Haiku 4.5 (if user opts in as target)
     "claude-haiku-4-5": {"input_per_mtok": 1.00, "output_per_mtok": 5.00},
@@ -24,7 +28,7 @@ def _price_for(model: str) -> dict[str, float]:
     if model in PRICING:
         return PRICING[model]
     # Unknown model: default to Kimi-style pricing rather than crashing.
-    return PRICING["kimi-k2-0711-preview"]
+    return PRICING["kimi-k2.6"]
 
 
 def usd_for(model: str, input_tokens: int, output_tokens: int) -> float:

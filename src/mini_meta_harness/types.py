@@ -61,7 +61,7 @@ class CostBreakdown(BaseModel):
     target_output_tokens: int = 0
     estimated_usd: float = 0.0
 
-    def add(self, other: "CostBreakdown") -> "CostBreakdown":
+    def add(self, other: CostBreakdown) -> CostBreakdown:
         return CostBreakdown(
             proposer_input_tokens=self.proposer_input_tokens + other.proposer_input_tokens,
             proposer_output_tokens=self.proposer_output_tokens + other.proposer_output_tokens,

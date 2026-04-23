@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import json
-import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from mini_meta_harness import outer_loop
@@ -15,12 +14,12 @@ def test_mock_run_three_iterations_produces_valid_artifacts(tmp_path: Path, monk
         run_id="test-mock-run",
         iterations=3,
         eval_split_size=10,
-        proposer_model="kimi-k2-0711-preview",
-        target_model="kimi-k2-0711-preview",
+        proposer_model="kimi-k2.6",
+        target_model="kimi-k2.6",
         mock=True,
-        started_at=datetime.now(timezone.utc),
+        started_at=datetime.now(UTC),
     )
-    summary = outer_loop.run(cfg, verbose=False)
+    outer_loop.run(cfg, verbose=False)
 
     run_dir = tmp_path / "runs" / "test-mock-run"
     assert run_dir.exists()
@@ -37,7 +36,7 @@ def test_mock_run_three_iterations_produces_valid_artifacts(tmp_path: Path, monk
         assert (d / "eval_trace.jsonl").exists()
         assert (d / "score.json").exists()
         # trace validates against EvalExample
-        lines = [l for l in (d / "eval_trace.jsonl").read_text().splitlines() if l.strip()]
+        lines = [ln for ln in (d / "eval_trace.jsonl").read_text().splitlines() if ln.strip()]
         assert lines, f"empty eval_trace in iter {i}"
         for ln in lines:
             EvalExample.model_validate(json.loads(ln))

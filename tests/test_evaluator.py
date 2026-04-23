@@ -22,7 +22,7 @@ def test_evaluate_baseline_on_three_examples(tmp_path: Path):
     score, traces = evaluate(
         harness_path=BASELINE,
         target_client=client,
-        target_model="kimi-k2-0711-preview",
+        target_model="kimi-k2.6",
         eval_set=examples,
         trace_path=trace_path,
     )
@@ -44,7 +44,7 @@ def test_evaluator_catches_harness_errors(tmp_path: Path):
     score, traces = evaluate(
         harness_path=bad,
         target_client=MockTargetClient(),
-        target_model="kimi-k2-0711-preview",
+        target_model="kimi-k2.6",
         eval_set=examples,
     )
     assert score.n_errors == 1

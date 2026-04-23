@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 
 MOONSHOT_BASE_URL_DEFAULT = "https://api.moonshot.ai/anthropic"
 
-# Default model ids — update these when Moonshot refreshes their catalog.
-# See README §22 (open questions).
-DEFAULT_PROPOSER_MODEL = "kimi-k2-0711-preview"
-DEFAULT_TARGET_MODEL = "kimi-k2-0711-preview"
+# Default model ids — Moonshot's current flagship as of April 2026.
+# Verify against https://platform.kimi.ai/docs/pricing/chat-k26 before paid runs.
+DEFAULT_PROPOSER_MODEL = "kimi-k2.6"
+DEFAULT_TARGET_MODEL = "kimi-k2.6"
 
 
 @dataclass(frozen=True)

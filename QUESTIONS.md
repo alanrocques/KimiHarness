@@ -2,12 +2,11 @@
 
 Per spec §22 — surface rather than decide.
 
-1. **Exact Moonshot model id.** `kimi-k2-0711-preview` is wired in as the
-   default proposer/target, but Moonshot refreshes their catalog regularly.
-   Verify against <https://platform.moonshot.ai> before the first paid run and
-   update `DEFAULT_PROPOSER_MODEL` / `DEFAULT_TARGET_MODEL` in
-   `src/mini_meta_harness/config.py` (and the matching key in
-   `src/mini_meta_harness/cost.py::PRICING`).
+1. ~~**Exact Moonshot model id.**~~ Resolved: `kimi-k2.6` is the current
+   flagship (verified against
+   <https://platform.kimi.ai/docs/pricing/chat-k26>, April 2026). Pricing
+   baked in: $0.95/M input (cache miss), $4.00/M output. Re-verify before
+   any paid run — Moonshot refreshes the catalog regularly.
 
 2. **Target model choice: Kimi vs. Claude Haiku 4.5.** The code already
    supports either — pass `--target-model claude-haiku-4-5` and set
@@ -20,10 +19,12 @@ Per spec §22 — surface rather than decide.
    additive (another ~$15 at 12 iterations). Worth it, or ship one dataset
    well first?
 
-4. **Pricing sanity check.** The numbers in `cost.py::PRICING` are rough
-   ballparks — $0.60/M input and $2.50/M output for Kimi K2.6, $1.00 / $5.00
-   for Claude Haiku 4.5. Verify against the live pricing pages before a
-   $15-budget run. The estimator is only as good as these constants.
+4. **Pricing sanity check.** Kimi K2.6 input is billed at two rates:
+   $0.16/M on cache hit vs. $0.95/M on cache miss. The estimator assumes
+   all input is cache-miss (conservative). If the Anthropic SDK starts
+   surfacing `usage.cache_read_input_tokens` against Moonshot's endpoint,
+   split `cost.py::PRICING` into hit/miss keys. Claude Haiku 4.5 pricing
+   ($1.00 / $5.00) is a ballpark — verify before cross-provider runs.
 
 5. **Per-iteration cost breakdown.** The `Iteration.cost` field in
    `RunSummary.iterations` is currently zeroed — running totals are kept in

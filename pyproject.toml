@@ -43,10 +43,15 @@ packages = ["src/mini_meta_harness"]
 [tool.ruff]
 line-length = 110
 target-version = "py311"
+extend-exclude = ["notebooks", "runs", "data"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Typer uses function-call defaults as the canonical pattern.
+"src/mini_meta_harness/run.py" = ["B008"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from . import cost as cost_mod
@@ -178,7 +178,6 @@ def _run_iteration(
     verbose: bool,
     already_written: bool = False,
 ) -> None:
-    started = datetime.now(timezone.utc)
     d = _iter_dir(run_dir, index)
     harness_path = d / "harness.py"
     if not already_written:
@@ -286,5 +285,5 @@ def _build_summary(run_dir: Path, config: RunConfig, total_cost: CostBreakdown) 
         iterations=iterations,
         total_cost=total_cost,
         best_iteration_index=best_idx,
-        finished_at=datetime.now(timezone.utc),
+        finished_at=datetime.now(UTC),
     )

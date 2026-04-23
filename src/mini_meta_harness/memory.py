@@ -8,7 +8,7 @@ thin read API; writes go through the outer loop.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .types import EvalExample, FilesystemRead, IterationScore
@@ -28,7 +28,7 @@ class Memory:
     def _record_read(self, path: Path, content: bytes | str) -> None:
         size = len(content) if isinstance(content, bytes) else len(content.encode("utf-8"))
         self._reads.append(
-            FilesystemRead(path=str(path), bytes_read=size, at=datetime.now(timezone.utc))
+            FilesystemRead(path=str(path), bytes_read=size, at=datetime.now(UTC))
         )
 
     def list_iterations(self) -> list[int]:
