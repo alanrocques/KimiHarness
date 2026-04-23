@@ -14,3 +14,4 @@ runs/*
 data/*
 !data/.gitkeep
 .DS_Store
+.claude
