@@ -5,8 +5,15 @@ A budget reproduction of **Meta-Harness**
 Claude Opus 4.6 proposer for **Kimi K2.6** via Moonshot's
 Anthropic-compatible API. 12 iterations on Symptom2Disease for under $15.
 
-The full build spec lives in [`docs/SPEC.md`](docs/SPEC.md). Open items are in
-[`QUESTIONS.md`](QUESTIONS.md).
+![accuracy per iteration](assets/accuracy.png)
+
+**Headline result** (run `2026-04-23_17-21-21`, 100 held-out examples):
+baseline **0.69 → best 1.00** at iteration 11, total spend **$0.73** —
+about 5% of the $15 budget. Full breakdown, per-iteration cost, best-harness
+source, and baseline-vs-best confusion matrix are in
+[`notebooks/explore_run.ipynb`](notebooks/explore_run.ipynb).
+
+Open items are in [`QUESTIONS.md`](QUESTIONS.md).
 
 ## TL;DR
 
@@ -23,11 +30,9 @@ with clean on-disk traces a downstream visualizer can consume.
 uv sync --extra dev --extra notebook          # install
 cp .env.example .env && $EDITOR .env          # MOONSHOT_API_KEY=...
 uv run mmh run --iterations 3 --mock          # end-to-end, no API calls
-uv run mmh run --iterations 12                # the real thing (~$10–15)
+uv run mmh run --iterations 12                # the real thing (~$0.75–$15)
+uv run jupyter lab notebooks/explore_run.ipynb  # inspect the run
 ```
-
-Then open `notebooks/explore_run.ipynb` to see the accuracy chart, cost
-breakdown, best harness, and baseline-vs-best confusion matrix.
 
 ## CLI
 
@@ -35,9 +40,33 @@ breakdown, best harness, and baseline-vs-best confusion matrix.
 mmh run --iterations 12                         # full run
 mmh run --iterations 3 --mock                   # canned responses, no API
 mmh run --iterations 12 --target-model claude-haiku-4-5  # cross-provider
-mmh summary runs/2026-04-23_14-30-00            # print a past run
-mmh cost runs/2026-04-23_14-30-00               # cost breakdown
+mmh summary runs/2026-04-23_17-21-21            # print a past run
+mmh cost runs/2026-04-23_17-21-21               # cost breakdown
 ```
+
+## Results
+
+First full 12-iteration run, run id `2026-04-23_17-21-21`:
+
+| iter | accuracy | notes |
+|---:|---:|---|
+| 0 | 0.69 | zero-shot baseline |
+| 1 | 0.28 | proposer spots `dengue` missing from labels; rewrites the whole prompt and over-corrects |
+| 2 | 0.72 | narrower edit, keeps the dengue fix, recovers |
+| 5 | 0.89 | rule-based post-corrections begin (model predicts X + input contains Y → rewrite to Z) |
+| 7 | 0.97 | |
+| **11** | **1.00** | 3 pinpoint rules targeting iter-10's remaining failures (distorted vision → migraine, "muscles pain" → dengue, "trouble seeing" → migraine) |
+| 12 | 0.97 | one new regression — best-iteration isn't always last |
+
+**Total cost**: $0.73 across 13 iterations. 76% of that was proposer-side
+(176k input, 61k output tokens); the target model only burned 197k input /
+33k output tokens running the actual classifier. That ratio — proposer
+context dominates — is the same pattern the paper reports.
+
+The notebook ([`notebooks/explore_run.ipynb`](notebooks/explore_run.ipynb))
+renders the accuracy-per-iteration chart above, a per-iteration cost stack,
+the full iteration-11 harness source, and a baseline-vs-best confusion
+matrix showing which failure modes disappeared.
 
 ## How it works
 
@@ -75,6 +104,10 @@ runs/<run_id>/
     │   └── score.json
     └── 001/ ...
 ```
+
+Every artifact is written eagerly, so a Ctrl+C at iteration N still leaves
+iterations 0..N−1 as a valid partial run that
+[`notebooks/explore_run.ipynb`](notebooks/explore_run.ipynb) can load.
 
 ## Differences from the paper
 
